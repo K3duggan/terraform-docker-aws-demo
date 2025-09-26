@@ -1,0 +1,5 @@
+region            = "us-east-1"
+key_pair_name     = "sr-devops-key"
+public_key_path   = "~/.ssh/id_rsa.pub"
+private_key_path  = "~/.ssh/id_rsa"
+allowed_ssh_cidr  = "YOUR.PUBLIC.IP.ADDR/32" # replace!
