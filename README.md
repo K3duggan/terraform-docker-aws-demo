@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 # terraform-docker-aws-demo
 Sample project demonstrating AWS infrastructure with Terraform and Docker, deploying a simple Node.js app to EC2.
 
@@ -23,3 +24,37 @@ terraform apply -auto-approve \
   -var="s3_bucket_name=sr-devops-tfstate-<your-unique-suffix>" \
   -var="region=us-east-1" \
   -var="dynamodb_table_name=sr-devops-tflock"
+=======
+# Terraform + Docker + AWS Demo
+
+Deploys a tiny Node.js “Hello, World!” app in a Docker container on an EC2 instance inside a VPC using Terraform.
+
+## 🔎 GRADER MODE (copy/paste)
+```bash
+# 0) Bootstrap backend
+cd bootstrap
+terraform init
+terraform apply -auto-approve \
+  -var="s3_bucket_name=sr-devops-tfstate-<uniq>" \
+  -var="region=us-east-1" \
+  -var="dynamodb_table_name=sr-devops-tflock"
+
+# 1) Main stack
+cd ../infra
+cp terraform.tfvars.example terraform.tfvars
+# EDIT terraform.tfvars: allowed_ssh_cidr="<YOUR.IP>/32", ssh key paths
+terraform init \
+  -backend-config="bucket=sr-devops-tfstate-<uniq>" \
+  -backend-config="key=infra/terraform.tfstate" \
+  -backend-config="region=us-east-1" \
+  -backend-config="dynamodb_table=sr-devops-tflock"
+terraform apply -auto-approve
+
+# 2) Test
+terraform output http_url
+
+# 3) Destroy
+terraform destroy -auto-approve
+cd ../bootstrap && terraform destroy -auto-approve
+
+>>>>>>> Stashed changes
