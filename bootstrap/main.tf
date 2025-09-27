@@ -53,7 +53,10 @@ resource "aws_dynamodb_table" "tflock" {
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "LockID"
 
-  attribute { name = "LockID" type = "S" }
+  attribute {
+       name = "LockID"
+       type = "S"
+  }
 }
 
 output "backend_bucket" { value = aws_s3_bucket.tfstate.bucket }

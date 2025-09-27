@@ -8,19 +8,19 @@ resource "aws_vpc" "main" {
   cidr_block           = var.vpc_cidr
   enable_dns_support   = true
   enable_dns_hostnames = true
-  tags = { Name = "sr-devops-vpc" }
+  tags                 = { Name = "sr-devops-vpc" }
 }
 
 resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
-  tags = { Name = "sr-devops-igw" }
+  tags   = { Name = "sr-devops-igw" }
 }
 
 resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = var.public_subnet_cidr
   map_public_ip_on_launch = true
-  tags = { Name = "sr-devops-public-subnet" }
+  tags                    = { Name = "sr-devops-public-subnet" }
 }
 
 resource "aws_route_table" "public" {
@@ -77,12 +77,40 @@ resource "aws_key_pair" "this" {
 
 # --- EC2 Instance ---
 resource "aws_instance" "web" {
-  ami                    = data.aws_ssm_parameter.al2023_ami.value
-  instance_type          = var.instance_type
-  subnet_id              = aws_subnet.public.id
-  vpc_security_group_ids = [aws_security_group.web_sg.id]
-  key_name               = aws_key_pair.this.key_name
+  ami                         = data.aws_ssm_parameter.al2023_ami.value
+  instance_type               = var.instance_type
+  subnet_id                   = aws_subnet.public.id
+  vpc_security_group_ids      = [aws_security_group.web_sg.id]
+  key_name                    = aws_key_pair.this.key_name
   associate_public_ip_address = true
+
+# Wait until Docker is installed and running (handles user_data timing)
+resource "null_resource" "wait_for_docker" {
+  depends_on = [aws_instance.web]
+
+  provisioner "remote-exec" {
+    inline = [
+      # Install if not present (idempotent)
+      "if ! command -v docker >/dev/null 2>&1; then sudo dnf -y install docker; fi",
+      "sudo systemctl enable --now docker || true",
+
+      # Wait for the docker binary to exist
+      "until command -v docker >/dev/null 2>&1; do echo 'waiting for docker binary...'; sleep 5; done",
+
+      # Wait for the docker service to be active
+      "until sudo systemctl is-active --quiet docker; do echo 'waiting for docker service...'; sleep 3; done",
+
+      "docker --version || sudo docker --version"
+    ]
+  }
+
+  connection {
+    type        = "ssh"
+    host        = aws_instance.web.public_ip
+    user        = "ec2-user"
+    private_key = file(pathexpand(var.private_key_path))
+  }
+}
 
   # Install Docker via user_data (reliable even if provisioner timing is off)
   user_data = <<-EOF
@@ -95,18 +123,9 @@ resource "aws_instance" "web" {
   EOF
 
   tags = {
-    Name = "sr-devops-web"
+    Name    = "sr-devops-web"
     Project = "sports-reference"
   }
-}
-
-# --- Provisioners: upload app + build/run Docker ---
-# Connection for provisioners
-connection {
-  type        = "ssh"
-  host        = aws_instance.web.public_ip
-  user        = "ec2-user"
-  private_key = file(var.private_key_path)
 }
 
 # Create remote app dir
