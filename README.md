@@ -14,7 +14,7 @@ Deploys a tiny Node.js “Hello, World!” web app in a Docker container on an E
   - Internet Gateway + Route to `0.0.0.0/0`
 - **Security**
   - Security Group: **HTTP (80) from anywhere**
-  - Security Group: **SSH (22) from <MYIP>/32**
+  - Security Group: **SSH (22) from <Your IP>/32**
 - **Compute**
   - EC2 (Amazon Linux 2023, `t3.micro`, public IP)
   - Docker installed (via `user_data`) and validated (provisioner)
@@ -45,7 +45,7 @@ app/ # Dockerfile, app.js, package.json (Hello, World!)
   - **GitHub key** (e.g., `~/.ssh/id_ed25519`) for repo access
   - **EC2 key** (e.g., `~/.ssh/sr-devops` + `sr-devops.pub`) for SSH/provisioners
 
-> 💸 **Cost note:** Running an EC2 instance incurs charges. Destroy when done.
+> 💸 **Cost note:** Running an EC2 instance can incur charges (See AWS guides for details). Destroy when done.
 
 ---
 
@@ -61,7 +61,7 @@ export AWS_DEFAULT_REGION=us-east-1
 cd bootstrap
 terraform init
 terraform apply -auto-approve \
-  -var="s3_bucket_name=sr-devops-tfstate-<uniq>" \
+  -var="s3_bucket_name=sr-devops-tfstate-<Your name uniq>" \
   -var="region=us-east-1" \
   -var="dynamodb_table_name=sr-devops-tflock"
 
