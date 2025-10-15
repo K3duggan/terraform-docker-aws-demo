@@ -1,6 +1,6 @@
 # Terraform + Docker + AWS Demo
 
-Deploys a tiny Node.js “Hello, World!” web app in a Docker container on an EC2 instance inside a VPC using **Terraform**. This repo is designed for assessments and learning: clean, reproducible, and minimal.
+Deploys a tiny Node.js “Hello, World!” web app in a Docker container on an EC2 instance inside a VPC using **Terraform**. This repo is designed for learning and demonstration: clean, reproducible, and minimal.
 
 ---
 
