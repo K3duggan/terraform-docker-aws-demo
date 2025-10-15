@@ -1,39 +1,37 @@
-# Node.js
-node_modules/
-npm-debug.log
-yarn-error.log
-
-# Docker
-*.tar
-*.log
-
-# Terraform
+# ── Terraform local state & caches (sensitive) ─────────────────────────
 *.tfstate
 *.tfstate.*
+.terraform/          # provider plugin cache, etc.
 crash.log
 crash.*.log
+
+# If you keep a local state file named like this
+.terraform.tfstate
+
+# ── Local variables (often contain secrets) ────────────────────────────
+terraform.tfvars
+*.tfvars
+*.auto.tfvars
+*.tfvars.json
+
+# ── Local overrides (developer-specific) ───────────────────────────────
 override.tf
 override.tf.json
 *_override.tf
 *_override.tf.json
-.terraform/
-.terraform.lock.hcl
 
-# AWS credentials (never commit!)
+# ── Credentials / keys / env files (very sensitive) ────────────────────
 *.pem
 *.key
-*.pub
-*.crt
+id_rsa*
+id_ed25519*
+*.pfx
+*.p12
+.env
+.env.*
+*.credentials
+*.keystore
 
-# OS / Editor junk
+# ── OS/editor clutter ──────────────────────────────────────────────────
 .DS_Store
-Thumbs.db
 *.swp
-*.swo
-.idea/
-.vscode/
-*.bak
-
-# App build artifacts
-dist/
-build/
