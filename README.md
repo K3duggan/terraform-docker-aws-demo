@@ -47,7 +47,7 @@ app/ # Dockerfile, app.js, package.json (Hello, World!)
 
 ---
 
-## Quick start (Grader Mode)
+## Quick start
 
 ```bash
 # 0) Configure AWS locally (once)
