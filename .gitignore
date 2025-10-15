@@ -35,3 +35,25 @@ id_ed25519*
 # ── OS/editor clutter ──────────────────────────────────────────────────
 .DS_Store
 *.swp
+
+# Terraform vars (often sensitive)
+terraform.tfvars
+*.tfvars
+*.auto.tfvars
+*.tfvars.json
+
+# Env files / secrets
+.env
+.env.*
+# common private keys (extra safety)
+id_rsa*
+id_ed25519*
+
+# Optional: Terraform crash logs & overrides
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
